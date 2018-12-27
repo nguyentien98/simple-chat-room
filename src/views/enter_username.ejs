@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Welcome to Instant Message</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <style>
+    html,body{
+      height: 100%;
+    }
+    .background {
+      background: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/Vjkyj2hBg/sand-clock-flat-shape-animation-on-blue-background-old-time_bt4kfp1q__F0005.png');
+      height: 100%;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="background d-flex align-items-center">
+    <div class="container">
+      <div class="col-6 offset-md-3">
+        <form>
+          <div class="form-group text-center">
+            <input name="username" class="form-control" placeholder="Enter your username to create the chat room">
+          </div>
+          <div class="form-group text-center">
+            <input type="password" name="password" class="form-control" placeholder="Enter room password">
+          </div>
+          <div class="form-group text-center">
+            <button type="button" class="btn btn-success w-100" id="btnStart">Start</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(function () {
+      $('#btnStart').click(function () {
+        let username = $('input[name="username"]').val();
+        let password = $('input[name="password"]').val();
+        let url = (window.location.href).split('/');
+        let hash = url[url.length - 1];
+        let data = JSON.stringify({
+            room: hash,
+            password: password,
+        });
+        if (username == '' || password == '') {
+          return alert('Please enter all inputs');
+        }
+        $.ajax({
+          method: 'POST',
+          url: '/join-room',
+          dataType: 'json',
+          contentType: 'application/json',
+          traditional: true,
+          data: data,
+          success: (result) => {
+            if (result.isValid && result.hash) {
+              localStorage.setItem('username', username);
+              localStorage.setItem(result.hash, password);
+              window.location = '/chat/' + result.hash;
+            } else {
+              alert("You don't have permission to join this room. Please try again!");
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

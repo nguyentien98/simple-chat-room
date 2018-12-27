@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Welcome to Instant Message</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <style>
+    html,body{
+      height: 100%;
+    }
+    .background {
+      background: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/Vjkyj2hBg/sand-clock-flat-shape-animation-on-blue-background-old-time_bt4kfp1q__F0005.png');
+      height: 100%;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="background d-flex align-items-center">
+    <div class="container">
+      <div class="col-6 offset-md-3">
+        <form>
+          <div class="form-group text-center">
+            <input name="name" class="form-control" placeholder="Enter your room name">
+          </div>
+          <div class="form-group text-center">
+            <input name="creator" class="form-control" placeholder="Enter your username to create the chat room">
+          </div>
+          <div class="form-group text-center">
+            <input type="password" name="password" class="form-control" placeholder="Enter room password">
+          </div>
+          <div class="form-group text-center">
+            <button type="button" class="btn btn-success w-100" id="btnStart">Start</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(function () {
+      $('#btnStart').click(function () {
+        let name = $('input[name="name"]').val();
+        let creator = $('input[name="creator"]').val();
+        let password = $('input[name="password"]').val();
+        let data = JSON.stringify({
+            name: name,
+            creator: creator,
+            password: password,
+        });
+        if (name == '' || creator == '' || password == '') {
+          return alert('Please enter all inputs');
+        }
+        $.ajax({
+          method: 'POST',
+          url: '/create-box',
+          dataType: 'json',
+          contentType: 'application/json',
+          traditional: true,
+          data: data,
+          success: (result) => {
+            if (result.hash) {
+              localStorage.setItem('username', result.creator);
+              localStorage.setItem(result.hash, password);
+              window.location = '/chat/' + result.hash;
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
